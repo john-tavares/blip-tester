@@ -7,7 +7,6 @@ class BlipFlow:
         self.__client = client
         self.actions = actions
         self.expected_message = expected_message
-        self
 
     def __start_client(self):
         self.client.start_chat()
