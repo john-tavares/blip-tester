@@ -42,12 +42,15 @@ class BlipTestClient:
 
         return messages
 
-    @property
-    def last_message(self):
+    def last_messages(self, size):
         html = self.__driver.page_source
         messages = self.__extract_messages_from_html(html)
 
-        return messages[-1]
+        return messages[-size:]
+
+    @property
+    def last_message(self):
+        return self.last_messages(size=1)
 
     @property
     def empty(self):
