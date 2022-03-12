@@ -22,7 +22,7 @@ class BlipTestClient:
         self.__driver.close()
 
     def __transform_card_to_message(self, html):
-        message = html.find('div', {'class': 'bubble'})
+        message = html.find('div', {'class': ['bubble', 'left']})
 
         text = message.find('div').text.replace('\n', '<br>')
         hour = html.find('div', {'class': 'flex'}).find('div').text
