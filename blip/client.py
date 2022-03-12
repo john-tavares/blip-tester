@@ -50,7 +50,12 @@ class BlipTestClient:
 
     @property
     def last_message(self):
-        return self.last_messages(size=1)
+        message = self.last_messages(size=1)
+
+        if len(message) == 0:
+            return None
+
+        return message[0]
 
     @property
     def empty(self):
