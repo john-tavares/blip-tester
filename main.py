@@ -6,6 +6,8 @@ blip = BlipTestClient(
 
 blip.start_chat()
 
+time.sleep(5)
+
 for i in range(5):
     blip.send_message("Oi!")
     time.sleep(5)
