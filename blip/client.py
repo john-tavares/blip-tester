@@ -20,3 +20,7 @@ class BlipTestClient:
 
     def close_chat(self):
         self.__driver.close()
+
+    @property
+    def last_message(self):
+        pass
