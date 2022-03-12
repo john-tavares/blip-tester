@@ -1,15 +1,10 @@
 from blip.client import BlipTestClient
-import time
+from blip.flow import BlipFlow
 
 blip = BlipTestClient(
     "Tester", "YmxpcHRlc3Rlcjo2NjMyYjdjYi0yOTNhLTRmMzMtYmRlYi1kYzE1ZGFiZDY1NWM=")
 
-blip.start_chat()
+hello_world_flow = BlipFlow(
+    'Hello World', blip, ['Hello World'], 'Olá! !<br>Seja2 bem-vindo(a)!')
 
-time.sleep(5)
-
-for i in range(5):
-    blip.send_message("Oi!")
-    time.sleep(5)
-
-blip.close_chat()
+print(hello_world_flow.test())

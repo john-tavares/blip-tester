@@ -1,4 +1,5 @@
-from client import BlipTestClient
+from blip.client import BlipTestClient
+import time
 
 
 class BlipFlow:
@@ -9,22 +10,30 @@ class BlipFlow:
         self.expected_message = expected_message
 
     def __start_client(self):
-        self.client.start_chat()
+        time.sleep(5)
+        self.__client.start_chat()
 
     def __close_client(self):
-        self.client.close_chat()
+        time.sleep(5)
+        self.__client.close_chat()
 
     def run(self):
-        self.start_client()
+        self.__start_client()
 
         for action in self.actions:
-            self.client.send_message(action)
+            self.__client.send_message(action)
+            time.sleep(5)
 
-        last_message = self.client.last_message
+        last_message = self.__client.last_message
 
-        self.close_client()
+        self.__close_client()
 
         return last_message
 
     def test(self):
-        pass
+        last_message = self.run()
+
+        if last_message is None:
+            return False
+
+        return last_message['text'] == self.expected_message
