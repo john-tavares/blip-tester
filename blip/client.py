@@ -1,26 +1,54 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import bs4
+import requests
+from uuid import uuid4
 
-
-class BlipTestClient:
-    def __init__(self, name, app_key):
-        self.name = name
-        self.__app_key = app_key
-        self.__blip_url = f'https://chat.blip.ai/?appKey={self.__app_key}'
-
-    def start_chat(self, options=None):
-        self.__driver = webdriver.Firefox(options=options)
-        self.__driver.get(self.__blip_url)
-
-    def send_message(self, message):
-        message_box = self.__driver.find_element_by_id('msg-textarea')
-        message_box.send_keys(message)
-        message_box.send_keys(Keys.ENTER)
-
-    def close_chat(self):
-        self.__driver.close()
-
-    @property
-    def last_message(self):
-        pass
+class BlipClient:
+    def __init__(self, cellphone, api_key:str, contract:str, start_message='bliptester'):
+        self.namespace = 'aa3ec985_9c33_4b56_8c1a_0449dc92104a'
+        self.start_message = start_message
+        self.identity = f'{cellphone}@wa.gw.msging.net'
+        self.cellphone = cellphone
+        self.headers = {'Content-Type': 'application/json', 'Authorization': api_key}
+        self.command_url = f'https://{contract}.http.msging.net/commands'
+        self.message_url = f'https://{contract}.http.msging.net/messages'
+    
+    def request_identity(self, server_identity:str):
+        payload = {
+            "id": uuid4().hex,
+            "to": "postmaster@wa.gw.msging.net",
+            "method": "get",
+            "uri": f"lime://wa.gw.msging.net/accounts/{server_identity}"
+        }
+        response = requests.post(self.command_url, headers=self.headers, json=payload).json()
+        
+        return response['resource']['alternativeAccount']
+    
+    def start_conversation(self, server_identity):
+        payload = {
+            "id": uuid4().hex,
+            "to": server_identity,
+            "type": "application/json",
+            "content": {
+                "type": "template",
+                "template": {
+                    "namespace": self.namespace,
+                    "name": self.start_message,
+                    "language": {
+                        "code": "pt_BR",
+                        "policy": "deterministic"
+                    },
+                    "components": []
+                }
+            }
+        }
+        response = requests.post(self.message_url, headers=self.headers, json=payload)
+        return response
+    
+    def send_message(self, server_identity, message):
+        payload = {
+            "id": uuid4().hex,
+            "to": server_identity,
+            "type": "text/plain",
+            "content": message
+        }
+        response = requests.post(self.message_url, headers=self.headers, json=payload)
+        return response
